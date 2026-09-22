@@ -41,4 +41,16 @@ class User extends Authenticatable
             'password' => 'hashed',
         ];
     }
+
+    public function subscriptions()
+    {
+        return $this->hasMany(Subscription::class);
+    }
+
+    public function lessons()
+    {
+        return $this->belongsToMany(Lesson::class, 'subscriptions')
+            ->withPivot('status', 'date_suscription')
+            ->withTimestamps();
+    }
 }

@@ -16,9 +16,9 @@ class UserController extends Controller
             $token = $user->createToken('auth_token')->plainTextToken;
             $user['token'] = $token;
         } catch (Exception $e) {
-            return response()->json(['status' => false, 'message' => 'Error al crear al usuario, intentelo mas tarde']);
+            report($e);
+            return response()->json(['status' => false, 'message' => 'Error al crear al usuario, intentelo mas tarde'],500);
         }
-
         return response()->json(['status' => 'success', 'user' => $user]);
     }
 }

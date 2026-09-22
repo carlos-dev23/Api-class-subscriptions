@@ -11,16 +11,17 @@ use Illuminate\Support\Carbon;
 class LessonController extends Controller
 {
     public function index() {
-        
-       $lessons = Lesson::get();
-       $data = [];
-       foreach($lessons as $lesson){
-        $sub_count = Subscription::where('lesson_id', $lesson->id)->count(); 
-        if($sub_count < $lesson->maximum_capacity){
-            array_push($data, $lesson);
+        try {
+            $lessons = Lesson::withCount([
+                'subscriptions as active_subscriptions' => fn($q) => $q->where('status', true)
+            ])->get()
+                ->filter(fn($l) => $l->active_subscriptions < $l->maximum_capacity)
+                ->values();
+            return response()->json(['status' => 'success', 'data' => $lessons], 200);
+        } catch (Exception $e) {
+            report($e);
+            return response()->json(['status' => 'error', 'message' => 'Error al construir los datos'], 500);
         }
-       }
-       return response()->json(['success'=>true,'data'=>$data],200);
     }
 
     public function subscribeLesson(Request $request){

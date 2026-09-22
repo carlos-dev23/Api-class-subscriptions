@@ -17,7 +17,7 @@ class UserController extends Controller
             $user['token'] = $token;
         } catch (Exception $e) {
             report($e);
-            return response()->json(['status' => false, 'message' => 'Error al crear al usuario, intentelo mas tarde'],500);
+            return response()->json(['status' => 'error', 'message' => 'Error al crear al usuario, intentelo mas tarde'],500);
         }
         return response()->json(['status' => 'success', 'user' => $user]);
     }
